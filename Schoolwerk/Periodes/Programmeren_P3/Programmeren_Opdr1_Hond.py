@@ -31,11 +31,17 @@ hond8 = Hond("Lolly", 3, "GRRRieerrrrr", "Duitse Herder")
 hond9 = Hond("Jilly", 3, "GRRReeeeerrrr", "Duitse Herder")
 hond10 = Hond("Jolly", 3, "GRRRerrrr", "Duitse Herder")
 
+nummerlijst = []
 
 blafLoop = 0
 while blafLoop != 10:
     blafLoop += 1
     x = random.randint(1, 10)
+    nummerlijst.append(x)
+    #print(nummerlijst)
+    if x == nummerlijst:
+        blafLoop -= 1
+        continue
     match x:
         case 1:
             hond1.blaf()
