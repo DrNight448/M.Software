@@ -1,0 +1,123 @@
+import tkinter as tk
+from tkinter import colorchooser
+from tkinter import filedialog
+from tkinter import messagebox
+import random
+import webbrowser
+
+#Programmeren Eindopdracht
+#Marvin Bader
+
+#Teken applicatie
+class PaintApp:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Paint Eindopdracht Hessel Steenwoerd")
+ 
+        menubar = tk.Menu(master)
+        master.config(menu=menubar)
+        apps_menu1 = tk.Menu(menubar, tearoff=0)
+        apps_menu2 = tk.Menu(menubar, tearoff=0)
+ 
+        menubar.add_cascade(label="Opties", menu=apps_menu1)
+        apps_menu1.add_command(label="Opslaan", command=self.save_canvas)
+        menubar.add_cascade(label="Andere Spellen", menu=apps_menu2)
+        apps_menu2.add_command(label="Getallen raden", command=self.play_guessing_game)
+ 
+        self.selected_color = "black"
+        self.brush_size = 2
+ 
+        self.canvas = tk.Canvas(master, bg="white", width=600, height=400)
+        self.canvas.pack(fill=tk.BOTH, expand=True)
+ 
+        self.color_frame = tk.Frame(master, bg="white")
+        self.color_frame.pack(pady=5)
+ 
+        self.color_button = tk.Button(self.color_frame, text="Select Color", command=self.select_color)
+        self.color_button.pack(side=tk.LEFT, padx=3)
+ 
+        self.size_frame = tk.Frame(master, bg="white")
+        self.size_frame.pack(pady=5)
+ 
+        sizes = [2, 4, 6, 8, 10]
+        for size in sizes:
+            size_button = tk.Button(self.size_frame, text=str(size), width=2, command=lambda s=size: self.set_brush_size(s))
+            size_button.pack(side=tk.LEFT, padx=3)
+ 
+        self.option_frame = tk.Frame(master, bg="white")
+        self.option_frame.pack(pady=5)
+ 
+        self.eraser_button = tk.Button(self.option_frame, text="Eraser", width=5, command=self.set_eraser)
+        self.eraser_button.pack(side=tk.LEFT, padx=3)
+ 
+        self.clear_button = tk.Button(self.option_frame, text="Clear", width=5, command=self.set_clear)
+        self.clear_button.pack(side=tk.LEFT, padx=3)
+ 
+        self.canvas.bind("<B1-Motion>", self.paint)
+ 
+    def select_color(self):
+        color = colorchooser.askcolor(title="Select Color")[1]
+        if color:
+            self.selected_color = color
+ 
+    def set_brush_size(self, size):
+        self.brush_size = size
+ 
+    def set_eraser(self):
+        self.selected_color = "white"
+ 
+    def set_clear(self):
+        self.canvas.delete("all")
+ 
+    def save_canvas(self):
+        file_path = filedialog.asksaveasfilename(defaultextension=".png")
+        if file_path:
+            x0 = self.master.winfo_rootx() + self.canvas.winfo_x()
+            y0 = self.master.winfo_rooty() + self.canvas.winfo_y()
+            x1 = x0 + self.canvas.winfo_width()
+            y1 = y0 + self.canvas.winfo_height()
+            self.canvas.postscript(file=file_path, colormode='color', x=x0, y=y0, width=x1, height=y1)
+ 
+
+    def paint(self, event):
+        x1, y1 = (event.x - self.brush_size), (event.y - self.brush_size)
+        x2, y2 = (event.x + self.brush_size), (event.y + self.brush_size)
+        self.canvas.create_oval(x1, y1, x2, y2, fill=self.selected_color, outline=self.selected_color)
+ 
+ #getallen raden
+    def play_guessing_game(self):
+        answer = random.randint(1, 10)
+        remaining_attempts = 3
+ 
+        def check_guess():
+            nonlocal remaining_attempts
+            guess = int(entry.get())
+            if guess == answer:
+                messagebox.showinfo("Congratulations", "You guessed the correct number!")
+            else:
+                remaining_attempts -= 1
+                if remaining_attempts > 0:
+                    messagebox.showwarning("Wrong", f"Wrong guess! {remaining_attempts} attempts remaining.")
+                else:
+                    messagebox.showerror("No Attempts Left", f"You've used all your attempts. The correct answer was: {answer}")
+                    webbrowser.open("https://zyph.nl")
+                    root.destroy()
+ 
+        root = tk.Tk()
+        root.title("Guessing Game")
+        label = tk.Label(root, text="Guess the number between 1 and 10:")
+        label.pack()
+        entry = tk.Entry(root)
+        entry.pack()
+        button = tk.Button(root, text="Guess", command=check_guess)
+        button.pack()
+        root.mainloop()
+ 
+def main():
+    root = tk.Tk()
+    paint_app = PaintApp(root)
+    root.mainloop()
+ 
+if __name__ == "__main__":
+    main()
+ 
