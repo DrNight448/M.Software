@@ -6,13 +6,13 @@ import random
 import webbrowser
 
 #Programmeren Eindopdracht
-#Marvin Bader
+#Marvin Bader & Hessel Steenwoerd
 
 #Teken applicatie
 class PaintApp:
     def __init__(self, master):
         self.master = master
-        self.master.title("Paint Eindopdracht Hessel Steenwoerd")
+        self.master.title("Paint Eindopdracht Hessel Steenwoerd & Marvin Bader")
  
         menubar = tk.Menu(master)
         master.config(menu=menubar)
